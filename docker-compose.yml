@@ -1,0 +1,172 @@
+version: "3.3"
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    hostname: nginx
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /var/hosts/nginx/certs:/etc/nginx/certs
+      - /var/hosts/nginx/vhost.d:/etc/nginx/vhost.d
+      - /var/hosts/nginx/html:/usr/share/nginx/html
+    environment:
+      - DHPARAM_GENERATION=false
+    restart: unless-stopped
+    networks:
+      - mis-net
+
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    hostname: nginx-le
+    container_name: nginx-le
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/hosts/nginx/acme:/etc/acme.sh
+      - /var/hosts/nginx/certs:/etc/nginx/certs
+      - /var/hosts/nginx/vhost.d:/etc/nginx/vhost.d
+      - /var/hosts/nginx/html:/usr/share/nginx/html
+    environment:
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    networks: 
+      - mis-net
+
+  mis-project-api:
+    container_name: mis-project-api
+    build: https://github.com/mis-py/mis-server.git
+    image: mis-server:v2.1.2
+    volumes:
+      - "./envs:/app/envs"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - mis-net
+    environment:
+      - VIRTUAL_HOST=${HOST_URL}
+      - LETSENCRYPT_HOST=${HOST_URL}
+      - VIRTUAL_PATH=${API_PATH}
+      - VIRTUAL_DEST=${API_DEST}      
+      - ENVIRONMENT=${ENVIRONMENT}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - RABBITMQ_URL=${RABBITMQ_HOST}
+      - EVENTORY_LOG_LEVEL=${EVENTORY_LOG_LEVEL}
+      - REDIS_HOST=${REDIS_HOST}
+      - MONGODB_URI=${MONGODB_HOST}
+      - MONGODB_TABLE=${MONGODB_TABLE}
+      - TIMEZONE=${TIMEZONE}
+      - MAX_WORKERS=1
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      rabbit:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+    
+  mis-web-ui:
+    build: https://github.com/mis-py/mis-web-ui.git
+    image: mis-web-ui
+    container_name: mis-web-ui
+    environment:
+      - VIRTUAL_HOST=${HOST_URL}
+      - LETSENCRYPT_HOST=${HOST_URL}
+      - VIRTUAL_PATH=${UI_PATH}
+    networks:
+      - mis-net
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.11.13-alpine
+    container_name: $RABBITMQ_HOST
+    networks:
+      - mis-net
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.0.10-alpine
+    container_name: $REDIS_HOST
+    networks:
+      - mis-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: $POSTGRES_HOST
+    hostname: $POSTGRES_HOST
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${POSTGRES_TZ}
+      - PGTZ=${POSTGRES_TZ}
+    volumes:
+      - ~/mis/postgres:/var/lib/postgresql/data
+    networks:
+      - mis-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  #postgres_admin:
+  #  image: dpage/pgadmin4:latest
+  #  container_name: postgres_admin
+  #  environment:
+  #    - VIRTUAL_HOST=${PGADMIN_HOST}
+  #    - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+  #    - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    #volumes:
+      #- /root/pg_admin/data:/var/lib/pgadmin
+      #- /root/pg_admin/servers.json:/pgadmin4/servers.json
+  #  networks:
+  #    - mis-net
+  #  depends_on:
+  #    - postgres
+  #  restart: unless-stopped
+    
+  mongodb:
+    image: mongo
+    restart: unless-stopped
+    container_name: $MONGODB_HOST
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_INIT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_INIT_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_TABLE}
+    volumes:
+      - ~/mis/mongo:/data/db
+    networks:
+      - mis-net
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  mis-net:
+    driver: bridge
