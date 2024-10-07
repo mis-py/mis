@@ -18,6 +18,7 @@ services:
     restart: unless-stopped
     networks:
       - mis-net
+    profiles: ['production']
 
   nginx-proxy-acme:
     image: nginxproxy/acme-companion
@@ -34,6 +35,7 @@ services:
       - NGINX_PROXY_CONTAINER=nginx-proxy
     networks: 
       - mis-net
+    profiles: ['production']
 
   mis-project-api:
     container_name: mis-project-api
@@ -49,7 +51,7 @@ services:
       - VIRTUAL_HOST=${HOST_URL}
       - LETSENCRYPT_HOST=${HOST_URL}
       - VIRTUAL_PATH=${API_PATH}
-      - VIRTUAL_DEST=${API_DEST}      
+      - VIRTUAL_DEST=${API_DEST}
       - ENVIRONMENT=${ENVIRONMENT}
       - LOG_LEVEL=${LOG_LEVEL}
       - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
@@ -75,7 +77,8 @@ services:
       mongodb:
         condition: service_healthy
     restart: unless-stopped
-    
+    profiles: ['production']
+
   mis-web-ui:
     build: https://github.com/mis-py/mis-web-ui.git
     image: mis-web-ui
@@ -87,6 +90,7 @@ services:
     networks:
       - mis-net
     restart: unless-stopped
+    profiles: ['production']
 
   rabbitmq:
     image: rabbitmq:3.11.13-alpine
@@ -99,6 +103,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+    profiles: ['production']
 
   redis:
     image: redis:7.0.10-alpine
@@ -111,6 +116,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles: ['production']
 
   postgres:
     image: postgres:15.2-alpine
@@ -132,23 +138,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles: ['production']
 
-  #postgres_admin:
-  #  image: dpage/pgadmin4:latest
-  #  container_name: postgres_admin
-  #  environment:
-  #    - VIRTUAL_HOST=${PGADMIN_HOST}
-  #    - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-  #    - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    #volumes:
-      #- /root/pg_admin/data:/var/lib/pgadmin
-      #- /root/pg_admin/servers.json:/pgadmin4/servers.json
-  #  networks:
-  #    - mis-net
-  #  depends_on:
-  #    - postgres
-  #  restart: unless-stopped
-    
   mongodb:
     image: mongo
     restart: unless-stopped
@@ -166,6 +157,55 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles: ['production']
+  
+  dev_mongodb:
+    extends:
+      service: mongodb
+    ports:
+    - "27017:27017"
+    profile: ['dev']
+  
+  dev_postgres:
+    extends:
+      service: postgres
+    ports:
+    - "5432:5432"
+    profile: ['dev']
+  
+  dev_redis:
+    extends:
+      service: redis
+    ports:
+    - "6379:6379"
+    profile: ['dev']
+
+  dev_rabbitmq:
+    extends:
+      service: rabbitmq
+    rabbitmq:
+    ports: 
+    - "5672:5672"
+    profile: ['dev']
+
+
+  
+  postgres_admin:
+    image: dpage/pgadmin4:latest
+    container_name: postgres_admin
+    environment:
+    #  - VIRTUAL_HOST=${PGADMIN_HOST}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    volumes:
+      - ~/mis/pg_admin/data:/var/lib/pgadmin
+      - ~/mis/pg_admin/servers.json:/pgadmin4/servers.json
+    networks:
+      - mis-net
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    profiles: ['dev']
 
 networks:
   mis-net:
