@@ -1,0 +1,36 @@
+name: Test project startup
+
+on:
+  push:
+    branches: ['new-runner']
+
+jobs:
+  test:
+    name: Build docker image
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create .env file
+      run: |
+        touch .env
+        echo POSTGRES_USER=postgres >> .env
+        echo POSTGRES_PASSWORD=postgres >> .env
+        echo POSTGRES_DB=mis >> .env
+        echo MONGODB_TABLE=mis
+        echo MONGODB_INIT_USERNAME=mongodb
+        echo MONGODB_INIT_ROOT_PASSWORD=mongodb
+
+    - name: Start with docker compose
+      run: docker compose up -d --wait --wait-timeout 30
+
+    - name: Show containers list
+      run: docker ps -a
+
+    - name: Show server logs
+      run: docker logs mis-server
+    
+    - name: Stop with docker compose
+      run: docker compose down
+

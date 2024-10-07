@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    ports:
+    - "27017:27017"
+  
+  postgres:
+    ports:
+    - "5432:5432"
+  
+  redis:
+    ports:
+    - "6379:6379"
+
+  rabbitmq:
+    ports: 
+    - "5672:5672"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    env_file: 
+      - .env
+    volumes:
+      - ./pg_admin/data:/var/lib/pgadmin
+    networks:
+      - default
+      - mis-net
+    ports: 
+      - "8080:80"
+    depends_on:
+      - dev_postgres
+    restart: unless-stopped
