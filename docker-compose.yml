@@ -9,7 +9,7 @@ services:
       - default
       - mis-net
     environment:
-      MAX_WORKERS=1
+      - MAX_WORKERS=1
     env_file: 
       - .env
     depends_on:
