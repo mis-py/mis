@@ -130,7 +130,8 @@ services:
   postgres_admin:
     image: dpage/pgadmin4:latest
     container_name: postgres_admin
-    env_file: api-server/dev.env
+    env_file: 
+      - .env
     volumes:
       - ./pg_admin/data:/var/lib/pgadmin
       - ./pg_admin/servers.json:/pgadmin4/servers.json
