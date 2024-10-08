@@ -106,14 +106,14 @@ services:
       service: mongodb
     ports:
     - "27017:27017"
-    profile: ['dev']
+    profiles: ['dev']
   
   dev_postgres:
     extends:
       service: postgres
     ports:
     - "5432:5432"
-    profile: ['dev']
+    profiles: ['dev']
   
   dev_redis:
     extends:
