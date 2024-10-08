@@ -127,14 +127,13 @@ services:
     - "5672:5672"
     profiles: ['dev']
 
-  postgres_admin:
+  pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: postgres_admin
+    container_name: pgadmin
     env_file: 
       - .env
     volumes:
       - ./pg_admin/data:/var/lib/pgadmin
-      - ./pg_admin/servers.json:/pgadmin4/servers.json
     networks:
       - default
       - mis-net
