@@ -125,7 +125,6 @@ services:
   dev_rabbitmq:
     extends:
       service: rabbitmq
-    rabbitmq:
     ports: 
     - "5672:5672"
     profiles: ['dev']
