@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
   mis-server:
     build: https://github.com/mis-py/mis-server.git
@@ -142,7 +140,7 @@ services:
     ports: 
       - "8080:80"
     depends_on:
-      - postgres
+      - dev_postgres
     restart: unless-stopped
     profiles: ['dev']
 
