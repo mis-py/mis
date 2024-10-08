@@ -120,7 +120,7 @@ services:
       service: redis
     ports:
     - "6379:6379"
-    profile: ['dev']
+    profiles: ['dev']
 
   dev_rabbitmq:
     extends:
@@ -128,7 +128,7 @@ services:
     rabbitmq:
     ports: 
     - "5672:5672"
-    profile: ['dev']
+    profiles: ['dev']
 
   postgres_admin:
     image: dpage/pgadmin4:latest
