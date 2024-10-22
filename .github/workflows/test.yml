@@ -18,12 +18,15 @@ jobs:
         echo POSTGRES_USER=postgres >> .env
         echo POSTGRES_PASSWORD=postgres >> .env
         echo POSTGRES_DB=mis >> .env
+        echo MONGODB_TABLE=mis
+        echo MONGODB_INIT_USERNAME=mongodb
+        echo MONGODB_INIT_ROOT_PASSWORD=mongodb
     
     - name: Start with docker compose
       run: docker compose version
 
     - name: Start with docker compose
-      run: docker compose --profile production up -d
+      run: docker compose --profile production up
     
     - name: Dump docker logs
       uses: jwalton/gh-docker-logs@v1
