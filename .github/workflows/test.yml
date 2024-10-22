@@ -16,7 +16,7 @@ jobs:
       run: touch .env
 
     - name: Start with docker compose
-      run: docker compose up -d -v
+      run: docker compose --verbose up -d
       env:
         COMPOSE_PROFILES: production
 
