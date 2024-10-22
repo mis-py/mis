@@ -28,6 +28,9 @@ jobs:
     - name: Show containers list
       run: docker ps -a
     
+    - name: Show main container log
+      run: docker logs mis-server
+    
     - name: Show containers list
       run: docker compose down
 
