@@ -24,4 +24,7 @@ jobs:
 
     - name: Start with docker compose
       run: docker compose --profile production up -d
+    
+    - name: Dump docker logs
+      uses: jwalton/gh-docker-logs@v1
 
