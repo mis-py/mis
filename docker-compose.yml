@@ -1,7 +1,6 @@
 services:
   mis-server:
-    build: https://github.com/mis-py/mis-server.git
-    image: mis-server:v2.2.0
+    image: gigawatte/mis-server:v2.1.1
     container_name: mis-server
     networks:
       - default
@@ -23,8 +22,7 @@ services:
     profiles: ['production']
 
   mis-web-ui:
-    build: https://github.com/mis-py/mis-web-ui.git
-    image: mis-web-ui
+    image: gigawatte/mis-web-ui:0.2.0b
     container_name: mis-web-ui
     env_file: 
       - .env
