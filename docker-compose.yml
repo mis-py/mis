@@ -16,8 +16,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      #mongodb:
-      #  condition: service_healthy
+      mongodb:
+        condition: service_healthy
     restart: unless-stopped
 
   mis-web-ui:
@@ -75,7 +75,7 @@ services:
       retries: 5
 
   mongodb:
-    image: mongo:4.4.18
+    image: mongo:8.0.1
     restart: unless-stopped
     container_name: mis-mongodb
     env_file:
@@ -85,11 +85,11 @@ services:
     networks:
       - default
       - mis-net
-    #healthcheck:
-    #  test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
-    #  interval: 10s
-    #  timeout: 5s
-    #  retries: 5
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   default:
