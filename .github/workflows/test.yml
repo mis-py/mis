@@ -26,8 +26,8 @@ jobs:
       run: docker compose up -d
     
     - name: Show containers list
-      uses: docker ps -a
+      run: docker ps -a
     
     - name: Show containers list
-      uses: docker compose down
+      run: docker compose down
 
