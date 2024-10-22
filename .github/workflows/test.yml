@@ -26,10 +26,10 @@ jobs:
       run: docker compose --profile production up -d
     
     - name: exec1
-      run: docker exec mis-mongodb echo 'db.stats().ok' 
+      run: docker exec -t mis-mongodb echo 'db.stats().ok' 
       
     - name: exec2
-      run: docker exec mis-mongodb mongosh localhost:27017/test --quiet
+      run: docker exec -t mis-mongodb mongo localhost:27017/test --quiet
     
     - name: Dump docker logs
       uses: jwalton/gh-docker-logs@v1
