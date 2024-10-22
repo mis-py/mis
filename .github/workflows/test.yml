@@ -25,6 +25,10 @@ jobs:
     - name: Start with docker compose
       run: docker compose up -d
     
+    - name: Sleep for 30 seconds
+      run: sleep 30s
+      shell: bash
+    
     - name: Show containers list
       run: docker ps -a
     
