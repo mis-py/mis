@@ -24,17 +24,17 @@ jobs:
 
     - name: Start with docker compose
       run: docker compose up -d
-    
-    - name: Sleep for 30 seconds
+
+    - name: Show containers list
+      run: docker ps -a
+
+    - name: Wait until server started
       run: sleep 30s
       shell: bash
     
-    - name: Show containers list
-      run: docker ps -a
-    
-    - name: Show main container log
+    - name: Show server logs
       run: docker logs mis-server
     
-    - name: Show containers list
+    - name: Stop with docker compose
       run: docker compose down
 
