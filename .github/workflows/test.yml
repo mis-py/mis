@@ -23,8 +23,11 @@ jobs:
         echo MONGODB_INIT_ROOT_PASSWORD=mongodb
 
     - name: Start with docker compose
-      run: docker compose --profile production up -d
+      run: docker compose up -d
     
-    - name: Dump docker logs
-      uses: jwalton/gh-docker-logs@v1
+    - name: Show containers list
+      uses: docker ps -a
+    
+    - name: Show containers list
+      uses: docker compose down
 
