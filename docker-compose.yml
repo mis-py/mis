@@ -19,8 +19,6 @@ services:
       mongodb:
         condition: service_healthy
     restart: unless-stopped
-    profiles: 
-      - production
 
   mis-web-ui:
     image: gigawatte/mis-web-ui:0.2.0b
@@ -31,8 +29,6 @@ services:
       - default
       - mis-net
     restart: unless-stopped
-    profiles: 
-      - production
 
   rabbitmq:
     image: rabbitmq:3.11.13-alpine
@@ -46,8 +42,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    profiles: 
-      - production
 
   redis:
     image: redis:7.0.10-alpine
@@ -61,8 +55,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles: 
-      - production
 
   postgres:
     image: postgres:15.2-alpine
@@ -81,8 +73,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles: 
-      - production
 
   mongodb:
     image: mongo:4.4.18
@@ -100,62 +90,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles: 
-      - production
-
-  dev_mongodb:
-    container_name: dev-mis-mongodb
-    extends:
-      service: mongodb
-    ports:
-    - "27017:27017"
-    profiles: 
-      - dev
-  
-  dev_postgres:
-    container_name: dev-mis-postgres
-    extends:
-      service: postgres
-    ports:
-    - "5432:5432"
-    profiles: 
-      - dev
-  
-  dev_redis:
-    container_name: dev-mis-redis
-    extends:
-      service: redis
-    ports:
-    - "6379:6379"
-    profiles: 
-      - dev
-
-  dev_rabbitmq:
-    container_name: dev-mis-rabbitmq
-    extends:
-      service: rabbitmq
-    ports: 
-    - "5672:5672"
-    profiles: 
-      - dev
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    env_file: 
-      - .env
-    volumes:
-      - ./pg_admin/data:/var/lib/pgadmin
-    networks:
-      - default
-      - mis-net
-    ports: 
-      - "8080:80"
-    depends_on:
-      - dev_postgres
-    restart: unless-stopped
-    profiles: 
-      - dev
 
 networks:
   default:
