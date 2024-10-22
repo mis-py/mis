@@ -1,6 +1,6 @@
 services:
   mis-server:
-    image: gigawatte/mis-server:v2.1.1
+    image: gigawatte/mis-server:2.1.1
     container_name: mis-server
     networks:
       - default
