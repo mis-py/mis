@@ -1,0 +1,18 @@
+{
+	email {$EMAIL:admin@example.com}
+}
+
+{$HOST_NAME:localhost} {
+	redir /api /api/
+
+	@mis-server {
+        path /api/*
+    }
+
+	reverse_proxy @mis-server mis-server:80
+    reverse_proxy mis-web-ui:80
+
+	log {
+		output stdout
+	}
+}
