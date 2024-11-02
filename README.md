@@ -13,6 +13,8 @@ To startup project you need an .env file with next required variables:
 `MONGODB_INIT_USERNAME`
 `MONGODB_INIT_ROOT_PASSWORD`
 
+See `.env.example` for all possible .env variables.
+
 # Dev startup
 Dev environment starts without web UI and sever core.
 Instead it maps services ports to public so you can connect to them from outside.

@@ -1,4 +1,21 @@
 services:
+  caddy:
+    container_name: caddy
+    image: caddy:2.8.4-alpine
+    restart: unless-stopped
+    environment:
+      - ${EMAIL:-}
+      - ${HOST_NAME:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ~/mis/caddy-data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - default
+      - mis-net
+
   mis-server:
     image: gigawatte/mis-server:2.2.2
     container_name: mis-server
