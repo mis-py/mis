@@ -1,27 +1,26 @@
-# WIP !!
+# Description
 
-Requires .env file with next properties filled:
+This project is designed to provide extendable platform with some useful builtin functionality and good looking web based UI interface.
 
+# Startup
 
-POSTGRES_USER=postgres
+To startup project you need an .env file with next required variables:
 
-POSTGRES_PASSWORD=postgres
+`POSTGRES_USER`
+`POSTGRES_PASSWORD`
+`POSTGRES_DB`
+`MONGODB_TABLE`
+`MONGODB_INIT_USERNAME`
+`MONGODB_INIT_ROOT_PASSWORD`
 
-POSTGRES_DB=mis
+# Dev startup
+Dev environment starts without web UI and sever core.
+Instead it maps services ports to public so you can connect to them from outside.
+Some required variables added in dev .env: 
 
-additionally for dev profile:
+`PGADMIN_DEFAULT_EMAIL`
+`PGADMIN_DEFAULT_PASSWORD`
 
-PGADMIN_DEFAULT_EMAIL=admin@admin.admin
-
-PGADMIN_DEFAULT_PASSWORD=admin
-
-do not forget change permission for pg_admin folder to make it work
+Also do not forget change permission for pg_admin folder to make it work:
 
 `sudo chown -R 5050:5050 ~/mis/pg_admin/`
-
-for better dev experience setup [Poetry](https://python-poetry.org/docs/#installation) first
-
-
-`docker compose --profile dev up`
-
-`docker compose --profile production up`
