@@ -2,7 +2,7 @@ name: Test project startup
 
 on:
   push:
-    branches: ['new-runner']
+    branches: ['main']
 
 jobs:
   test:
