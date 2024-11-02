@@ -1,8 +1,8 @@
 {
-	email {$EMAIL}
+	email {$EMAIL:admin@example.com}
 }
 
-{$HOST_NAME} {
+{$HOST_NAME:localhost} {
 	redir /api /api/
 
 	@mis-server {

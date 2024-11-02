@@ -15,6 +15,8 @@ jobs:
     - name: Create .env file
       run: |
         touch .env
+        echo HOST_NAME=localhost >> .env
+        echo EMAIL=admin@example.com >> .env
         echo POSTGRES_USER=postgres >> .env
         echo POSTGRES_PASSWORD=postgres >> .env
         echo POSTGRES_DB=mis >> .env
@@ -23,16 +25,18 @@ jobs:
         echo MONGODB_INIT_ROOT_PASSWORD=mongodb
 
     - name: Start with docker compose
-      run: docker compose up -d --wait --wait-timeout 30
+      run: docker compose up -d --wait --wait-timeout 30 --quiet-pull
 
-    - name: Show containers list
-      run: docker ps -a
-
+    - name: Verify redirect to https
+      run: |
+        curl -I --fail http://localhost/ || exit 1
+        curl -I -X GET --fail http://localhost/api || exit 1
+        curl -I -k --fail https://localhost/ || exit 1
+        curl -I -X GET -k --fail https://localhost/api || exit 1
+        curl -I -X GET -k --fail https://localhost/api/ || exit 1
+    
     - name: Show server logs
       run: docker logs mis-server
-
-    - name: Show caddy logs
-      run: docker logs caddy
     
     - name: Stop with docker compose
       run: docker compose down

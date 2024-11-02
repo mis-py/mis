@@ -4,8 +4,8 @@ services:
     image: caddy:2.8.4-alpine
     restart: unless-stopped
     environment:
-      - ${EMAIL:-}
-      - ${HOST_NAME:-localhost}
+      - EMAIL=${EMAIL}
+      - HOST_NAME=${HOST_NAME}
     ports:
       - "80:80"
       - "443:443"
