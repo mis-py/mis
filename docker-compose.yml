@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
 
   mis-web-ui:
-    image: gigawatte/mis-web-ui:0.2.0b
+    image: gigawatte/mis-web-ui:0.2.1b
     container_name: mis-web-ui
     env_file: 
       - .env
@@ -52,6 +52,12 @@ services:
       - default
       - mis-net
     restart: unless-stopped
+    healthcheck:
+      test: curl --fail http://localhost:80/health || exit 1
+      interval: 2s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   rabbitmq:
     image: rabbitmq:3.11.13-alpine
