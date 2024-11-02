@@ -34,10 +34,7 @@ jobs:
         curl -I -k --fail https://localhost/ || exit 1
         curl -I -X GET -k --fail https://localhost/api || exit 1
         curl -I -X GET -k --fail https://localhost/api/ || exit 1
-    
-    - name: Show server logs
-      run: docker logs mis-server
-    
+
     - name: Stop with docker compose
       run: docker compose down
 

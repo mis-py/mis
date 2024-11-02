@@ -5,7 +5,8 @@ This project is designed to provide extendable platform with some useful builtin
 # Startup
 
 To startup project you need an .env file with next required variables:
-
+`HOST_NAME` for caddy domain name resolve and SSL. Set to `localhost` or host ip addres if no domain name currently have.
+`EMAIL` for caddy auto SSL
 `POSTGRES_USER`
 `POSTGRES_PASSWORD`
 `POSTGRES_DB`
